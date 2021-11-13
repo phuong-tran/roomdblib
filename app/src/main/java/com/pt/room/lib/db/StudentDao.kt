@@ -39,22 +39,18 @@ interface StudentDao : BaseDaoWithLookupAndConverterEntityTemplate<Long, Student
 
      override val lookupEntity: LookupEntity<Long, StudentEntity> get() {
         return object : LookupEntity<Long, StudentEntity> {
-            @Transaction
             override suspend fun fetchById(id: Long): StudentEntity? {
                 return findById(id)
             }
 
-            @Transaction
             override suspend fun fetchWhereIdIn(ids: List<Long>): List<StudentEntity> {
                 return findWhereIdIn(ids)
             }
 
-            @Transaction
             override fun fetchWhereIdInAsFlow(ids: List<Long>): Flow<List<StudentEntity>> {
                 return findWhereIdInAsFlow(ids)
             }
 
-            @Transaction
             override fun fetchByIdAsAsFlow(id: Long): Flow<StudentEntity?> {
                 return findByIdAsAsFlow(id)
             }
