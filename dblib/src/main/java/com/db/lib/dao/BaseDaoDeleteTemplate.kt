@@ -2,9 +2,9 @@ package com.db.lib.dao
 
 import androidx.room.Delete
 import androidx.room.Transaction
-import com.db.lib.dml.EntityDeleter
+import com.db.lib.dml.EntityDeleteTemplate
 
-interface BaseDaoDeleter<E> : EntityDeleter<E> {
+interface BaseDaoDeleteTemplate<E> : EntityDeleteTemplate<E> {
     @Transaction
     @Delete
     override suspend fun delete(entity: E)

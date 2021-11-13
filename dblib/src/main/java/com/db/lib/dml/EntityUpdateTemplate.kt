@@ -1,6 +1,6 @@
 package com.db.lib.dml
 
-interface EntityUpdater<E> {
+interface EntityUpdateTemplate<E> {
     suspend fun update(entity: E)
     suspend fun update(vararg entities: E)
     suspend fun update(entities: List<E>)

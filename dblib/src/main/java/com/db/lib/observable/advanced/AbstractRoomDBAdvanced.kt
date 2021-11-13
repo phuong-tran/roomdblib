@@ -1,10 +1,10 @@
 package com.db.lib.observable.advanced
 
 import android.database.sqlite.SQLiteAbortException
-import com.db.lib.dml.EntityDeleter
-import com.db.lib.dml.EntityInserter
+import com.db.lib.dml.EntityDeleteTemplate
+import com.db.lib.dml.EntityInsertTemplate
 import com.db.lib.dml.LookupEntity
-import com.db.lib.dml.EntityUpdater
+import com.db.lib.dml.EntityUpdateTemplate
 import com.db.lib.converter.EntityConverter
 import com.db.lib.observable.Config
 import com.db.lib.observable.Config.Companion.toMutableSharedFlow
@@ -22,9 +22,9 @@ import kotlinx.coroutines.flow.flow
 abstract class AbstractRoomDBAdvanced<ID, E, A>(
     private val entityConverter: EntityConverter<E, A>,
     private val lookupEntity: LookupEntity<ID, E>,
-    private val entityInserter: EntityInserter<ID, E>,
-    private val entityUpdater: EntityUpdater<E>,
-    private val entityDeleter: EntityDeleter<E>,
+    private val entityInsertTemplate: EntityInsertTemplate<ID, E>,
+    private val entityUpdateTemplate: EntityUpdateTemplate<E>,
+    private val entityDeleteTemplate: EntityDeleteTemplate<E>,
     config: Config = Config.defaultConfig
 ) : EntityConverter<E, A> by entityConverter,
     LookupEntity<ID, E> by lookupEntity,
@@ -47,7 +47,7 @@ abstract class AbstractRoomDBAdvanced<ID, E, A>(
 
     override suspend fun delete(entity: E): A {
         val deletedRecord = convert(entity)
-        entityDeleter.delete(entity)
+        entityDeleteTemplate.delete(entity)
         return deletedRecord.also { record ->
             RecordsChange.RecordDeleted(record).notifyRecordChangeEvent()
         }
@@ -59,7 +59,7 @@ abstract class AbstractRoomDBAdvanced<ID, E, A>(
 
     override suspend fun delete(entities: List<E>): Collection<A> {
         val deletedRecords = convert(entities.toList())
-        entityDeleter.delete(entities)
+        entityDeleteTemplate.delete(entities)
         return deletedRecords.also {
             RecordsChange.RecordsDeleted(it).notifyRecordChangeEvent()
         }
@@ -84,7 +84,7 @@ abstract class AbstractRoomDBAdvanced<ID, E, A>(
     }
 
     override suspend fun insert(entity: E): A {
-        val id = entityInserter.insert(entity)
+        val id = entityInsertTemplate.insert(entity)
         return lookupEntity.fetchById(id)?.let { record ->
             convert(record).also { model ->
                 RecordsChange.RecordInserted(model).notifyRecordChangeEvent()
@@ -93,7 +93,7 @@ abstract class AbstractRoomDBAdvanced<ID, E, A>(
     }
 
     override suspend fun insert(entities: List<E>): Collection<A> {
-        val ids = entityInserter.insert(entities)
+        val ids = entityInsertTemplate.insert(entities)
         return lookupEntity.fetchWhereIdIn(ids.toList()).let { records ->
             convert(records).also { models ->
                 RecordsChange.RecordsInserted(models).notifyRecordChangeEvent()
@@ -122,7 +122,7 @@ abstract class AbstractRoomDBAdvanced<ID, E, A>(
     }
 
     override suspend fun update(entity: E): A {
-        entityUpdater.update(entity)
+        entityUpdateTemplate.update(entity)
         return convert(entity).also { model ->
             RecordsChange.RecordUpdated(model).notifyRecordChangeEvent()
         }
@@ -133,7 +133,7 @@ abstract class AbstractRoomDBAdvanced<ID, E, A>(
     }
 
     override suspend fun update(entities: List<E>): Collection<A> {
-        entityUpdater.update(entities)
+        entityUpdateTemplate.update(entities)
         return convert(entities).also { models ->
             RecordsChange.RecordsUpdated(models).notifyRecordChangeEvent()
         }
