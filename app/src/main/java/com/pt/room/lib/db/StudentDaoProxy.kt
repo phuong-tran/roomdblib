@@ -1,0 +1,8 @@
+package com.pt.room.lib.db
+
+import com.db.lib.observable.advanced.AbstractRoomDBAdvancedTemplateV2
+import com.pt.room.lib.model.StudentModel
+
+class StudentDaoProxy constructor(
+    private val dao: StudentDao,
+) : AbstractRoomDBAdvancedTemplateV2<Long, StudentEntity, StudentModel>(dao)

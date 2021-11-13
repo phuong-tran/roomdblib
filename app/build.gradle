@@ -1,0 +1,144 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-android-extensions'
+    id "androidx.navigation.safeargs.kotlin"
+    id 'dagger.hilt.android.plugin'
+}
+
+android {
+    compileOptions {
+        kotlin {
+            kotlinOptions {
+                freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+            }
+        }
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+        freeCompilerArgs += [
+                "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+                "-Xopt-in=kotlinx.coroutines.FlowPreview"]
+    }
+    buildFeatures {
+        viewBinding = true
+    }
+    compileSdkVersion deps.build.compileSdkVersion
+    buildToolsVersion deps.build.buildToolsVersion
+
+    defaultConfig {
+        applicationId deps.build.applicationId
+        minSdkVersion deps.build.minSdkVersion
+        targetSdkVersion deps.build.targetSdkVersion
+        versionCode deps.build.versionCode
+        versionName deps.build.versionName
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        applicationIdSuffix 'com.pt.roomlib'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources true
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    kapt {
+        correctErrorTypes true
+    }
+}
+
+dependencies {
+    implementation project(path: ':dblib')
+    /*implementation 'androidx.appcompat:appcompat:1.3.1'*/
+    def zxingEmbeddedVersion = "4.2.0"
+    def zxingCoreVersion = "3.4.0"
+
+    implementation deps.fragment
+    implementation deps.recyclerview
+    implementation deps.navigationfragmentktx
+    implementation deps.navigationui
+
+    // Coroutines
+    implementation deps.coroutines
+    // Zxing
+    implementation ("com.journeyapps:zxing-android-embedded:$zxingEmbeddedVersion") { transitive = false }
+    implementation "com.google.zxing:core:$zxingCoreVersion"
+
+    // RX
+    implementation deps.rx.rxandroid
+    implementation deps.rx.rxjava
+    implementation deps.rx.kotlin
+
+    // ExifInterface
+    implementation deps.exifinterface
+
+    // Rx Binding
+    implementation deps.rxbinding.rxbinding
+    implementation deps.rxbinding.core
+    implementation deps.rxbinding.appcompat
+    implementation deps.rxbinding.drawerlayout
+    implementation deps.rxbinding.leanback
+    implementation deps.rxbinding.recyclerview
+    implementation deps.rxbinding.slidingpanelayout
+    implementation deps.rxbinding.swiperefreshlayout
+    implementation deps.rxbinding.viewpager
+    implementation deps.rxbinding.viewpager2
+    implementation deps.rxbinding.material
+
+    // Lifecycle
+    implementation deps.lifecycle.viewmodel
+    // LiveData
+    implementation deps.lifecycle.livedata
+    // Saved state module for ViewModel
+    implementation deps.lifecycle.viewmodelsavedstate
+    // Lifecycles only (without ViewModel or LiveData)
+    implementation deps.lifecycle.runtime
+    // Annotation processor
+    implementation deps.lifecycle.commonjava8
+    kapt deps.lifecycle.commonjava8
+    // alternately - if using Java8, use the following instead of lifecycle-compiler
+    // optional - ProcessLifecycleOwner provides a lifecycle for the whole application process
+    implementation deps.lifecycle.process
+    // RxPermission
+    implementation deps.rxpermission
+    // Feature module Support
+    // implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
+
+    // ROOM
+    implementation deps.room.runtime
+    kapt deps.room.compiler
+    implementation deps.room.ktx
+    implementation deps.room.rxjava3
+
+    // Dagger
+    implementation deps.dagger.hilt
+    kapt deps.dagger.hiltcompiler
+
+    // DataStore : Preferences DataStore (SharedPreferences like APIs)
+    implementation deps.datastore.preferences
+    implementation deps.datastore.rxjava3
+
+    // Validator
+    implementation deps.commonvalidator
+    implementation deps.kotlin.stdlib
+    implementation deps.corektx
+    implementation deps.appcompat
+    implementation deps.material
+    implementation deps.constraintlayout
+
+    implementation deps.map
+    implementation deps.location
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}
