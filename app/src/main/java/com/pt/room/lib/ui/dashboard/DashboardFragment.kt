@@ -4,41 +4,49 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.coroutineScope
+import com.pt.room.lib.base.FragmentSupportViewBinding
 import com.pt.room.lib.databinding.FragmentDashboardBinding
+import com.pt.room.lib.db.StudentDaoProxy
+import com.pt.room.lib.db.StudentEntity
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_dashboard.*
+import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicInteger
+import javax.inject.Inject
 
-class DashboardFragment : Fragment() {
+@AndroidEntryPoint
+class DashboardFragment : FragmentSupportViewBinding<FragmentDashboardBinding>() {
 
-    private lateinit var dashboardViewModel: DashboardViewModel
-    private var _binding: FragmentDashboardBinding? = null
+    @Inject
+    lateinit var studentDaoProxy: StudentDaoProxy
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
-
-    override fun onCreateView(
+    override fun createViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        dashboardViewModel =
-            ViewModelProvider(this).get(DashboardViewModel::class.java)
+        attachToParent: Boolean
+    ): FragmentDashboardBinding = FragmentDashboardBinding.inflate(inflater, container, false)
 
-        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
-        val root: View = binding.root
 
-        val textView: TextView = binding.textDashboard
-        dashboardViewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
-        })
-        return root
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        insertButton.setOnClickListener {
+            lifecycle.coroutineScope.launch {
+                val counter = next
+                studentDaoProxy.insert(StudentEntity(name = "Phuong Tran $counter", age = counter))
+            }
+        }
+        deleteAll.setOnClickListener {
+            lifecycle.coroutineScope.launch {
+                studentDaoProxy.deleteAll().also {
+                    counter.set(0)
+                }
+            }
+        }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    companion object {
+        private val counter = AtomicInteger(0)
+        val next get() = counter.incrementAndGet()
     }
 }

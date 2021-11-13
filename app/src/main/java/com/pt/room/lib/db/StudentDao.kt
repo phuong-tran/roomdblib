@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 private const val FIND_ALL = "SELECT * FROM studentEntity"
 private const val FIND_BY_ID = "SELECT * FROM studentEntity WHERE id =:id"
 private const val FIND_ALL_WHERE_ID_IN = "SELECT * FROM studentEntity WHERE id IN(:ids)"
+private const val DELETE_ALL = "DELETE FROM studentEntity"
 
 @Dao
 interface StudentDao : BaseDaoWithLookupAndConverterEntityTemplate<Long, StudentEntity, StudentModel> {
@@ -28,10 +29,13 @@ interface StudentDao : BaseDaoWithLookupAndConverterEntityTemplate<Long, Student
     fun findAllFlow() : Flow<List<StudentEntity>>
 
     @Query(FIND_ALL_WHERE_ID_IN)
-    abstract suspend fun findWhereIdIn(ids: List<Long>): List<StudentEntity>
+    suspend fun findWhereIdIn(ids: List<Long>): List<StudentEntity>
 
     @Query(FIND_ALL_WHERE_ID_IN)
     fun findWhereIdInAsFlow(ids: List<Long>): Flow<List<StudentEntity>>
+
+    @Query(DELETE_ALL)
+    suspend fun deleteAll()
 
      override val lookupEntity: LookupEntity<Long, StudentEntity> get() {
         return object : LookupEntity<Long, StudentEntity> {
