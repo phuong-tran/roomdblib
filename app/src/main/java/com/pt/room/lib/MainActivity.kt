@@ -1,6 +1,7 @@
 package com.pt.room.lib
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     private fun registerListener() {
         studentDaoProxy.dataRecordChangeFlow.asLiveData().observe(this) {
             Toast.makeText(this, "$it", Toast.LENGTH_SHORT).show()
+            Log.d("RECORD_CHANGED", it.toString())
         }
     }
 }
