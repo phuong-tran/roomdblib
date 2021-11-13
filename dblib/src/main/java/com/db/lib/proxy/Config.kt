@@ -1,4 +1,4 @@
-package com.db.lib.observable
+package com.db.lib.proxy
 
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow

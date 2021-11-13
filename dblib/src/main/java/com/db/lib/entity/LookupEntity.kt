@@ -1,4 +1,4 @@
-package com.db.lib.dml
+package com.db.lib.entity
 import kotlinx.coroutines.flow.Flow
 
 interface LookupEntity<ID, E> {

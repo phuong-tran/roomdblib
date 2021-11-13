@@ -1,14 +1,14 @@
-package com.db.lib.observable.advanced
+package com.db.lib.proxy.advanced
 
 import android.database.sqlite.SQLiteAbortException
 import com.db.lib.dml.EntityDeleteTemplate
 import com.db.lib.dml.EntityInsertTemplate
-import com.db.lib.dml.LookupEntity
+import com.db.lib.entity.LookupEntity
 import com.db.lib.dml.EntityUpdateTemplate
 import com.db.lib.converter.EntityConverter
-import com.db.lib.observable.Config
-import com.db.lib.observable.Config.Companion.toMutableSharedFlow
-import com.db.lib.observable.RecordsChange
+import com.db.lib.proxy.Config
+import com.db.lib.proxy.Config.Companion.toMutableSharedFlow
+import com.db.lib.proxy.RecordsChange
 import com.db.lib.transformer.EntityDeleteTransformer
 import com.db.lib.transformer.EntityInsertTransformer
 import com.db.lib.transformer.EntityUpdateTransformer
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 
-abstract class AbstractRoomDBAdvanced<ID, E, A>(
+abstract class AbstractDaoProxyAdvanced<ID, E, A>(
     private val entityConverter: EntityConverter<E, A>,
     private val lookupEntity: LookupEntity<ID, E>,
     private val entityInsertTemplate: EntityInsertTemplate<ID, E>,

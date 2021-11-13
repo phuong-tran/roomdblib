@@ -33,7 +33,9 @@ class DashboardFragment : FragmentSupportViewBinding<FragmentDashboardBinding>()
         insertButton.setOnClickListener {
             lifecycle.coroutineScope.launch {
                 val counter = next
-                studentDaoProxy.insert(StudentEntity(name = "Phuong Tran $counter", age = counter))
+                studentDaoProxy.insert(StudentEntity(name = "Phuong Tran $counter", age = counter)).also {
+
+                }
             }
         }
         deleteAll.setOnClickListener {

@@ -5,7 +5,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.db.lib.dml.EntityUpdateTemplate
 
-interface BaseDaoUpdateTemplate<ID, E> : EntityUpdateTemplate<E> {
+interface DaoUpdateTemplate<ID, E> : EntityUpdateTemplate<E> {
     @Transaction
     @Update(onConflict = OnConflictStrategy.REPLACE)
     override suspend fun update(entity: E)

@@ -1,4 +1,4 @@
-package com.db.lib.observable
+package com.db.lib.proxy
 
 sealed class RecordsChange<out A> {
     data class RecordInserted<A>(val record: A) : RecordsChange<A>()

@@ -5,7 +5,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Transaction
 import com.db.lib.dml.EntityInsertTemplate
 
-interface BaseDaoInsertTemplate<ID, E> : EntityInsertTemplate<ID, E> {
+interface DaoInsertTemplate<ID, E> : EntityInsertTemplate<ID, E> {
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     override suspend fun insert(entity: E): ID

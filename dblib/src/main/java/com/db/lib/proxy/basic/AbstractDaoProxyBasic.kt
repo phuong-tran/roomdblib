@@ -1,20 +1,20 @@
-package com.db.lib.observable.basic
+package com.db.lib.proxy.basic
 
 import com.db.lib.dml.EntityDeleteTemplate
 import com.db.lib.dml.EntityInsertTemplate
-import com.db.lib.dml.LookupEntity
+import com.db.lib.entity.LookupEntity
 import com.db.lib.dml.EntityUpdateTemplate
 import com.db.lib.converter.NoopConverter
-import com.db.lib.observable.Config
-import com.db.lib.observable.advanced.AbstractRoomDBAdvanced
+import com.db.lib.proxy.Config
+import com.db.lib.proxy.advanced.AbstractDaoProxyAdvanced
 
-abstract class AbstractRoomDBBasic<ID, E>(
+abstract class AbstractDaoProxyBasic<ID, E>(
     lookupEntity: LookupEntity<ID, E>,
     entityInsertTemplate: EntityInsertTemplate<ID, E>,
     entityUpdateTemplate: EntityUpdateTemplate<E>,
     entityDeleteTemplate: EntityDeleteTemplate<E>,
     config: Config = Config.defaultConfig
-) : AbstractRoomDBAdvanced<ID, E, E>(
+) : AbstractDaoProxyAdvanced<ID, E, E>(
     NoopConverter(),
     lookupEntity,
     entityInsertTemplate,

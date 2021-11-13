@@ -1,6 +1,6 @@
 package com.pt.room.lib.db
 
-import com.db.lib.dml.LookupEntity
+import com.db.lib.entity.LookupEntity
 import kotlinx.coroutines.flow.Flow
 
 class StudentEntityLookup constructor(
