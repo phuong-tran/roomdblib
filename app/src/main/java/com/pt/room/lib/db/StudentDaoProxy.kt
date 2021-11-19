@@ -10,7 +10,7 @@ class StudentDaoProxy (
 
     suspend fun deleteAll() {
         dao.deleteAll().also {
-            RecordsChange.RecordsDeletedAll.notifyRecordChangeEvent()
+            notifyRecordChangeEvent(RecordsChange.RecordsDeletedAll)
         }
     }
 }

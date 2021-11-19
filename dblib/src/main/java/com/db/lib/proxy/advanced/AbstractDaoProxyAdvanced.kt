@@ -32,24 +32,29 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
     EntityUpdateTransformer<E, A>,
     EntityInsertTransformer<E, A> {
 
-    private val sharedDataChangeStateFlow: MutableSharedFlow<RecordsChange<A>> = config.toMutableSharedFlow()
+    private val sharedDataChangeStateFlow: MutableSharedFlow<RecordsChange<A>> =
+        config.toMutableSharedFlow()
     val dataRecordChangeFlow: Flow<RecordsChange<A>> =
         sharedDataChangeStateFlow.asSharedFlow().distinctUntilChanged()
 
     val subscriptionCount: StateFlow<Int> get() = sharedDataChangeStateFlow.subscriptionCount
     val subscriptionCountValue: Int get() = subscriptionCount.value
 
-    protected suspend fun RecordsChange<A>.notifyRecordChangeEvent(): RecordsChange<A> {
+    private suspend fun RecordsChange<A>.notifyRecordChangeEventInternal(): RecordsChange<A> {
         return apply {
             sharedDataChangeStateFlow.emit(this)
         }
+    }
+
+    suspend fun notifyRecordChangeEvent(record: RecordsChange<A>): RecordsChange<A> {
+        return record.notifyRecordChangeEventInternal()
     }
 
     override suspend fun delete(entity: E): A {
         val deletedRecord = convert(entity)
         entityDeleteTemplate.delete(entity)
         return deletedRecord.also { record ->
-            RecordsChange.RecordDeleted(record).notifyRecordChangeEvent()
+            RecordsChange.RecordDeleted(record).notifyRecordChangeEventInternal()
         }
     }
 
@@ -61,7 +66,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         val deletedRecords = convert(entities.toList())
         entityDeleteTemplate.delete(entities)
         return deletedRecords.also {
-            RecordsChange.RecordsDeleted(it).notifyRecordChangeEvent()
+            RecordsChange.RecordsDeleted(it).notifyRecordChangeEventInternal()
         }
     }
 
@@ -87,7 +92,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         val id = entityInsertTemplate.insert(entity)
         return lookupEntity.fetchById(id)?.let { record ->
             convert(record).also { model ->
-                RecordsChange.RecordInserted(model).notifyRecordChangeEvent()
+                RecordsChange.RecordInserted(model).notifyRecordChangeEventInternal()
             }
         } ?: throw SQLiteAbortException("Cannot get inserted record for $entity")
     }
@@ -96,7 +101,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         val ids = entityInsertTemplate.insert(entities)
         return lookupEntity.fetchWhereIdIn(ids.toList()).let { records ->
             convert(records).also { models ->
-                RecordsChange.RecordsInserted(models).notifyRecordChangeEvent()
+                RecordsChange.RecordsInserted(models).notifyRecordChangeEventInternal()
             }
         }
     }
@@ -124,7 +129,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
     override suspend fun update(entity: E): A {
         entityUpdateTemplate.update(entity)
         return convert(entity).also { model ->
-            RecordsChange.RecordUpdated(model).notifyRecordChangeEvent()
+            RecordsChange.RecordUpdated(model).notifyRecordChangeEventInternal()
         }
     }
 
@@ -135,7 +140,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
     override suspend fun update(entities: List<E>): Collection<A> {
         entityUpdateTemplate.update(entities)
         return convert(entities).also { models ->
-            RecordsChange.RecordsUpdated(models).notifyRecordChangeEvent()
+            RecordsChange.RecordsUpdated(models).notifyRecordChangeEventInternal()
         }
     }
 
