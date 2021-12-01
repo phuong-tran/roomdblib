@@ -29,7 +29,7 @@ object DataBaseModule {
 
     @Provides
     @Singleton
-    fun provide(studentDataBase: StudentDataBase): StudentDaoProxy {
+    fun provideStudentDaoProxy(studentDataBase: StudentDataBase): StudentDaoProxy {
         return StudentDaoProxy(studentDataBase.studentDao())
     }
 }

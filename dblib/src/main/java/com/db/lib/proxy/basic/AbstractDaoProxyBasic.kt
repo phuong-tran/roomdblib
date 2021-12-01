@@ -8,6 +8,7 @@ import com.db.lib.converter.NoopConverter
 import com.db.lib.proxy.Config
 import com.db.lib.proxy.advanced.AbstractDaoProxyAdvanced
 
+// No Converter
 abstract class AbstractDaoProxyBasic<ID, E>(
     lookupEntity: LookupEntity<ID, E>,
     entityInsertTemplate: EntityInsertTemplate<ID, E>,
