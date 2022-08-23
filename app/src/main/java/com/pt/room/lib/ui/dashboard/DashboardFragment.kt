@@ -1,10 +1,12 @@
 package com.pt.room.lib.ui.dashboard
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.coroutineScope
+import com.pt.room.lib.TestActivity
 import com.pt.room.lib.base.FragmentSupportViewBinding
 import com.pt.room.lib.databinding.FragmentDashboardBinding
 import com.pt.room.lib.db.StudentDaoProxy
@@ -44,6 +46,9 @@ class DashboardFragment : FragmentSupportViewBinding<FragmentDashboardBinding>()
                     counter.set(0)
                 }
             }
+        }
+        startTestActivity.setOnClickListener {
+            startActivity(Intent(requireActivity(), TestActivity::class.java))
         }
     }
 
