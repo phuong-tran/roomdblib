@@ -7,10 +7,10 @@ import com.db.lib.dao.template.BaseDaoWithLookupAndConverterEntityTemplate
 import com.pt.room.lib.model.StudentModel
 import kotlinx.coroutines.flow.Flow
 
-private const val FIND_ALL = "SELECT * FROM studentEntity"
-private const val FIND_BY_ID = "SELECT * FROM studentEntity WHERE id =:id"
-private const val FIND_ALL_WHERE_ID_IN = "SELECT * FROM studentEntity WHERE id IN(:ids)"
-private const val DELETE_ALL = "DELETE FROM studentEntity"
+private const val FIND_ALL = "SELECT * FROM StudentEntity"
+private const val FIND_BY_ID = "SELECT * FROM StudentEntity WHERE id =:id"
+private const val FIND_ALL_WHERE_ID_IN = "SELECT * FROM StudentEntity WHERE id IN(:ids)"
+private const val DELETE_ALL = "DELETE FROM StudentEntity"
 
 @Dao
 interface StudentDao :
