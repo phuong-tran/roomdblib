@@ -7,7 +7,7 @@ import com.db.lib.entity.BaseEntity
 @Entity
 data class StudentEntity(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id")
-    override val id: Long = 0,
+    val id: Long = 0,
     val name: String,
     val age: Int
-): BaseEntity<Long>
+)

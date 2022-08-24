@@ -1,10 +1,10 @@
 package com.db.lib.proxy.basic
 
+import com.db.lib.converter.NoopConverter
 import com.db.lib.dml.EntityDeleteTemplate
 import com.db.lib.dml.EntityInsertTemplate
-import com.db.lib.entity.LookupEntity
 import com.db.lib.dml.EntityUpdateTemplate
-import com.db.lib.converter.NoopConverter
+import com.db.lib.entity.LookupEntity
 import com.db.lib.proxy.Config
 import com.db.lib.proxy.advanced.AbstractDaoProxyAdvanced
 

@@ -7,6 +7,7 @@ import com.db.lib.dml.EntityUpdateTemplate
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.flow.Flow
 
 interface DaoUpdateTemplate<ID, E> : EntityUpdateTemplate<E> {
     @Transaction

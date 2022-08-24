@@ -6,6 +6,8 @@ import com.db.lib.converter.EntityConverter
 import com.db.lib.dao.template.BaseDaoWithLookupAndConverterEntityTemplate
 import com.pt.room.lib.model.StudentModel
 import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Single
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -17,23 +19,31 @@ private const val DELETE_ALL = "DELETE FROM StudentEntity"
 @Dao
 interface StudentDao :
     BaseDaoWithLookupAndConverterEntityTemplate<Long, StudentEntity, StudentModel> {
-    /*@Query(FIND_BY_ID)
-    suspend fun findById(id: Long): StudentEntity?
 
     @Query(FIND_BY_ID)
+    suspend fun findById(id: Long): StudentEntity?
+    @Query(FIND_BY_ID)
     fun findByIdAsAsFlow(id: Long): Flow<StudentEntity?>
-
-    @Query(FIND_ALL)
-    suspend fun findAll(): List<StudentEntity>
-
-    @Query(FIND_ALL)
-    fun findAllFlow(): Flow<List<StudentEntity>>
-
     @Query(FIND_ALL_WHERE_ID_IN)
     suspend fun findWhereIdIn(ids: List<Long>): List<StudentEntity>
-
     @Query(FIND_ALL_WHERE_ID_IN)
-    fun findWhereIdInAsFlow(ids: List<Long>): Flow<List<StudentEntity>>*/
+    fun findWhereIdInAsFlow(ids: List<Long>): Flow<List<StudentEntity>>
+    @Query(FIND_ALL)
+    suspend fun findAll(): List<StudentEntity>
+    @Query(FIND_ALL)
+    fun findAllFlow(): Flow<List<StudentEntity>>
+    @Query(FIND_ALL)
+    fun findAllSingle(): Single<List<StudentEntity>>
+    @Query(FIND_ALL)
+    fun findAllMayBe(): Maybe<List<StudentEntity>>
+    @Query(FIND_BY_ID)
+    fun findByIdSingle(id: Long): Single<StudentEntity>
+    @Query(FIND_BY_ID)
+    fun findByIdMayBe(id: Long): Maybe<StudentEntity>
+    @Query(FIND_ALL_WHERE_ID_IN)
+    fun findWhereIdInSingle(ids: List<Long>): Single<List<StudentEntity>>
+    @Query(FIND_ALL_WHERE_ID_IN)
+    fun findWhereIdInMayBe(ids: List<Long>): Maybe<List<StudentEntity>>
 
     @Query(DELETE_ALL)
     override suspend fun deleteAll(): Int
