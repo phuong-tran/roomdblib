@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import com.db.lib.converter.EntityConverter
 import com.db.lib.dao.template.BaseDaoWithLookupAndConverterEntityTemplate
+import com.db.lib.ddl.EntityFinderTemplate
 import com.pt.room.lib.model.StudentModel
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe

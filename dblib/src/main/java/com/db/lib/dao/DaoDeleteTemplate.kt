@@ -1,6 +1,7 @@
 package com.db.lib.dao
 
 import androidx.room.Delete
+import androidx.room.Query
 import androidx.room.Transaction
 import com.db.lib.dml.EntityDeleteTemplate
 import io.reactivex.rxjava3.core.Completable
