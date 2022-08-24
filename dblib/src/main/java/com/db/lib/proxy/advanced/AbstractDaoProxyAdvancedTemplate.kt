@@ -10,7 +10,7 @@ abstract class AbstractDaoProxyAdvancedTemplate<ID, E, A>(
     config: Config = Config.defaultConfig
 ) : AbstractDaoProxyAdvanced<ID, E, A>(
     entityConverter,
-    daoTemplate.lookupEntity,
+    daoTemplate.entityFinder,
     daoTemplate,
     daoTemplate,
     daoTemplate,

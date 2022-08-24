@@ -3,31 +3,36 @@ package com.db.lib.proxy.advanced
 import android.database.sqlite.SQLiteAbortException
 import com.db.lib.dml.EntityDeleteTemplate
 import com.db.lib.dml.EntityInsertTemplate
-import com.db.lib.entity.LookupEntity
 import com.db.lib.dml.EntityUpdateTemplate
 import com.db.lib.converter.EntityConverter
+import com.db.lib.ddl.EntityFinderTemplate
 import com.db.lib.proxy.Config
 import com.db.lib.proxy.Config.Companion.toMutableSharedFlow
 import com.db.lib.proxy.RecordsChange
 import com.db.lib.transformer.EntityDeleteTransformer
 import com.db.lib.transformer.EntityInsertTransformer
 import com.db.lib.transformer.EntityUpdateTransformer
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 
 abstract class AbstractDaoProxyAdvanced<ID, E, A>(
     private val entityConverter: EntityConverter<E, A>,
-    private val lookupEntity: LookupEntity<ID, E>,
+    private val entityFinder: EntityFinderTemplate<ID, E>,
     private val entityInsertTemplate: EntityInsertTemplate<ID, E>,
     private val entityUpdateTemplate: EntityUpdateTemplate<E>,
     private val entityDeleteTemplate: EntityDeleteTemplate<E>,
     config: Config = Config.defaultConfig
 ) : EntityConverter<E, A> by entityConverter,
-    LookupEntity<ID, E> by lookupEntity,
+    //EntityFinderTemplate<ID, E> by entityFinder,
     EntityDeleteTransformer<E, A>,
     EntityUpdateTransformer<E, A>,
     EntityInsertTransformer<E, A> {
@@ -45,6 +50,13 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
             sharedDataChangeStateFlow.emit(this)
         }
     }
+
+    private fun RecordsChange<A>.tryNotifyRecordChangeEventInternal(): RecordsChange<A> {
+        return apply {
+            sharedDataChangeStateFlow.tryEmit(this)
+        }
+    }
+
 
     suspend fun notifyRecordChangeEvent(record: RecordsChange<A>): RecordsChange<A> {
         return record.notifyRecordChangeEventInternal()
@@ -88,9 +100,53 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         }
     }
 
+    override fun deleteAsSingle(entity: E): Single<A> {
+        return entityDeleteTemplate.deleteSingle(entity).flatMap {
+            val deletedRecord = convert(entity)
+            Single.just(deletedRecord)
+        }.doOnSuccess {
+            RecordsChange.RecordDeleted(it).tryNotifyRecordChangeEventInternal()
+        }
+    }
+
+    override fun deleteAsSingle(vararg entities: E): Single<Collection<A>> {
+       return deleteAsSingle(entities.toList())
+    }
+
+    override fun deleteAsSingle(entities: List<E>): Single<Collection<A>> {
+        return entityDeleteTemplate.deleteSingle(entities).flatMap {
+            val deletedRecord = convert(entities)
+            Single.just(deletedRecord)
+        }.doOnSuccess {
+            RecordsChange.RecordsDeleted(it).tryNotifyRecordChangeEventInternal()
+        }
+    }
+
+    override fun deleteAsMayBe(entity: E): Maybe<A> {
+        return entityDeleteTemplate.deleteMaybe(entity).flatMap {
+            val deletedRecord = convert(entity)
+            Maybe.just(deletedRecord)
+        }.doOnSuccess {
+            RecordsChange.RecordDeleted(it).tryNotifyRecordChangeEventInternal()
+        }
+    }
+
+    override fun deleteAsMaybe(vararg entities: E): Maybe<Collection<A>> {
+       return deleteAsMayBe(entities.toList())
+    }
+
+    override fun deleteAsMayBe(entities: List<E>): Maybe<Collection<A>> {
+        return entityDeleteTemplate.deleteMaybe(entities).flatMap {
+            val deletedRecord = convert(entities)
+            Maybe.just(deletedRecord)
+        }.doOnSuccess {
+            RecordsChange.RecordsDeleted(it).tryNotifyRecordChangeEventInternal()
+        }
+    }
+
     override suspend fun insert(entity: E): A {
         val id = entityInsertTemplate.insert(entity)
-        return lookupEntity.fetchById(id)?.let { record ->
+        return entityFinder.findById(id)?.let { record ->
             convert(record).also { model ->
                 RecordsChange.RecordInserted(model).notifyRecordChangeEventInternal()
             }
@@ -99,7 +155,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
 
     override suspend fun insert(entities: List<E>): Collection<A> {
         val ids = entityInsertTemplate.insert(entities)
-        return lookupEntity.fetchWhereIdIn(ids.toList()).let { records ->
+        return entityFinder.findWhereIdIn(ids.toList()).let { records ->
             convert(records).also { models ->
                 RecordsChange.RecordsInserted(models).notifyRecordChangeEventInternal()
             }
