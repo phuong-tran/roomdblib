@@ -48,10 +48,8 @@ interface StudentDao : BaseDaoTemplate<Long, StudentEntity> {
 
     @Query(DELETE_ALL)
     override suspend fun deleteAll(): Int
-
     @Query(DELETE_ALL)
     override fun deleteAllCompletable(): Completable
-
     override fun deleteAllFlow(): Flow<Int> = flow {
         emit(deleteAll())
     }

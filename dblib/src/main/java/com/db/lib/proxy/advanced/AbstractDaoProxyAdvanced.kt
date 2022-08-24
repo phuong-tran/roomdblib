@@ -12,12 +12,14 @@ import com.db.lib.proxy.RecordsChange
 import com.db.lib.transformer.EntityDeleteTransformer
 import com.db.lib.transformer.EntityInsertTransformer
 import com.db.lib.transformer.EntityUpdateTransformer
+import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Single
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
 
@@ -127,6 +129,26 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
 
     override fun deleteMaybe(vararg entities: E): Maybe<Collection<A>> {
         return deleteMayBe(entities.toList())
+    }
+
+    override suspend fun deleteAll(): Int {
+        return entityDeleteTemplate.deleteAll().also {
+            RecordsChange.RecordsDeletedAll.notifyRecordChangeEventInternal()
+        }
+    }
+
+    override fun deleteAllCompletable(): Completable {
+        return entityDeleteTemplate.deleteAllCompletable().doOnComplete {
+            RecordsChange.RecordsDeletedAll.tryNotifyRecordChangeEventInternal()
+        }
+    }
+
+    override fun deleteAllFlow(): Flow<Int> {
+        return flow {
+            entityDeleteTemplate.deleteAllFlow().collect {
+                RecordsChange.RecordsDeletedAll.notifyRecordChangeEventInternal()
+            }
+        }
     }
 
     override fun deleteMayBe(entities: List<E>): Maybe<Collection<A>> {

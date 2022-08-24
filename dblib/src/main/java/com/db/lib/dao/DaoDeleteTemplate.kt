@@ -58,16 +58,4 @@ interface DaoDeleteTemplate<E> : EntityDeleteTemplate<E> {
     @Transaction
     @Delete
     override fun deleteSingle(entities: List<E>): Single<Int>
-
-    suspend fun deleteAll() : Int {
-        TODO("Not yet implemented")
-    }
-
-    fun deleteAllCompletable(): Completable {
-        TODO("Not yet implemented")
-    }
-
-    fun deleteAllFlow(): Flow<Int> {
-        TODO("Not yet implemented")
-    }
 }

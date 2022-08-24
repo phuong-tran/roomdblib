@@ -3,8 +3,9 @@ package com.db.lib.dml
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.flow.Flow
 
-interface EntityDeleteTemplate<E> {
+interface EntityDeleteTemplate<E> : EntityDeleteAllTemplate {
     suspend fun delete(entity: E) : Int
     suspend fun delete(vararg entities: E) : Int
     suspend fun delete(entities: List<E>) : Int
@@ -21,5 +22,4 @@ interface EntityDeleteTemplate<E> {
     fun deleteSingle(entity: E) : Single<Int>
     fun deleteSingle(vararg entities: E) : Single<Int>
     fun deleteSingle(entities: List<E>) : Single<Int>
-
 }

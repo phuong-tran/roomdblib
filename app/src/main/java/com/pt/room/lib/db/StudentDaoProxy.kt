@@ -9,18 +9,11 @@ import com.pt.room.lib.model.StudentModel
 class StudentDaoProxy (
     entityFinder: EntityFinderTemplate<Long, StudentEntity>,
     entityConverter: StudentEntityConverter,
-    private val dao: StudentDao,
+    dao: StudentDao,
 ) : AbstractDaoProxyAdvanced<Long, StudentEntity, StudentModel>(
     entityConverter = entityConverter,
     entityFinder = entityFinder,
     entityInsertTemplate = dao,
     entityUpdateTemplate = dao,
     entityDeleteTemplate = dao,
-
-) {
-    suspend fun deleteAll() {
-        dao.deleteAll().also {
-            notifyRecordChangeEvent(RecordsChange.RecordsDeletedAll)
-        }
-    }
-}
+)
