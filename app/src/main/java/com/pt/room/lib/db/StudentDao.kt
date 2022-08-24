@@ -5,7 +5,9 @@ import androidx.room.Query
 import com.db.lib.converter.EntityConverter
 import com.db.lib.dao.template.BaseDaoWithLookupAndConverterEntityTemplate
 import com.pt.room.lib.model.StudentModel
+import io.reactivex.rxjava3.core.Completable
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 private const val FIND_ALL = "SELECT * FROM StudentEntity"
 private const val FIND_BY_ID = "SELECT * FROM StudentEntity WHERE id =:id"
@@ -34,9 +36,19 @@ interface StudentDao :
     fun findWhereIdInAsFlow(ids: List<Long>): Flow<List<StudentEntity>>
 
     @Query(DELETE_ALL)
-    suspend fun deleteAll()
+    override suspend fun deleteAll(): Int
 
-    override val lookupEntity get() = StudentEntityLookup(this)
+    @Query(DELETE_ALL)
+    override fun deleteAllCompletable(): Completable
+
+    override fun deleteAllFlow(): Flow<Int> = flow {
+        emit(deleteAll())
+    }
+
+    override val lookupEntity
+        get() = StudentEntityLookup(
+            this
+        )
 
     override val entityConverter: EntityConverter<StudentEntity, StudentModel>
         get() = StudentEntityConverter()
