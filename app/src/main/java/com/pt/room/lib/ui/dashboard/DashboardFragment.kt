@@ -2,6 +2,7 @@ package com.pt.room.lib.ui.dashboard
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,7 +37,7 @@ class DashboardFragment : FragmentSupportViewBinding<FragmentDashboardBinding>()
             lifecycle.coroutineScope.launch {
                 val counter = next
                 studentDaoProxy.insert(StudentEntity(name = "Phuong Tran $counter", age = counter)).also {
-
+                    Log.d("PHUONGTRAN", "inserted Record = $it")
                 }
             }
         }

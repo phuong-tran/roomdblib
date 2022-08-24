@@ -9,16 +9,16 @@ interface EntityDeleteTransformer<E, A> {
     suspend fun delete(vararg entities: E) : Collection<A>
     suspend fun delete(entities: List<E>) : Collection<A>
 
-    fun deleteAsFlow(entity: E): Flow<A>
-    fun deleteAsFlow(vararg entities: E) : Flow<Collection<A>>
-    fun deleteAsFlow(entities: List<E>) : Flow<Collection<A>>
+    fun deleteFlow(entity: E): Flow<A>
+    fun deleteFlow(vararg entities: E) : Flow<Collection<A>>
+    fun deleteFlow(entities: List<E>) : Flow<Collection<A>>
 
-    fun deleteAsSingle(entity: E) : Single<A>
-    fun deleteAsSingle(vararg entities: E) : Single<Collection<A>>
-    fun deleteAsSingle(entities: List<E>) : Single<Collection<A>>
+    fun deleteSingle(entity: E) : Single<A>
+    fun deleteSingle(vararg entities: E) : Single<Collection<A>>
+    fun deleteSingle(entities: List<E>) : Single<Collection<A>>
 
-    fun deleteAsMayBe(entity: E) : Maybe<A>
-    fun deleteAsMaybe(vararg entities: E) : Maybe<Collection<A>>
-    fun deleteAsMayBe(entities: List<E>) : Maybe<Collection<A>>
+    fun deleteMayBe(entity: E) : Maybe<A>
+    fun deleteMaybe(vararg entities: E) : Maybe<Collection<A>>
+    fun deleteMayBe(entities: List<E>) : Maybe<Collection<A>>
 
 }

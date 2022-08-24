@@ -1,11 +1,11 @@
 package com.db.lib.proxy.advanced
 
 import android.database.sqlite.SQLiteAbortException
+import com.db.lib.converter.EntityConverter
+import com.db.lib.ddl.EntityFinderTemplate
 import com.db.lib.dml.EntityDeleteTemplate
 import com.db.lib.dml.EntityInsertTemplate
 import com.db.lib.dml.EntityUpdateTemplate
-import com.db.lib.converter.EntityConverter
-import com.db.lib.ddl.EntityFinderTemplate
 import com.db.lib.proxy.Config
 import com.db.lib.proxy.Config.Companion.toMutableSharedFlow
 import com.db.lib.proxy.RecordsChange
@@ -14,15 +14,12 @@ import com.db.lib.transformer.EntityInsertTransformer
 import com.db.lib.transformer.EntityUpdateTransformer
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Single
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 
 abstract class AbstractDaoProxyAdvanced<ID, E, A>(
     private val entityConverter: EntityConverter<E, A>,
@@ -82,63 +79,59 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         }
     }
 
-    override fun deleteAsFlow(entity: E): Flow<A> {
+    override fun deleteFlow(entity: E): Flow<A> {
         return flow {
             emit(delete(entity))
         }
     }
 
-    override fun deleteAsFlow(vararg entities: E): Flow<Collection<A>> {
+    override fun deleteFlow(vararg entities: E): Flow<Collection<A>> {
         return flow {
             emit(delete(entities.toList()))
         }
     }
 
-    override fun deleteAsFlow(entities: List<E>): Flow<Collection<A>> {
+    override fun deleteFlow(entities: List<E>): Flow<Collection<A>> {
         return flow {
             emit(delete(entities))
         }
     }
 
-    override fun deleteAsSingle(entity: E): Single<A> {
-        return entityDeleteTemplate.deleteSingle(entity).flatMap {
-            val deletedRecord = convert(entity)
-            Single.just(deletedRecord)
+    override fun deleteSingle(entity: E): Single<A> {
+        return entityDeleteTemplate.deleteSingle(entity).map {
+            convert(entity)
         }.doOnSuccess {
             RecordsChange.RecordDeleted(it).tryNotifyRecordChangeEventInternal()
         }
     }
 
-    override fun deleteAsSingle(vararg entities: E): Single<Collection<A>> {
-       return deleteAsSingle(entities.toList())
+    override fun deleteSingle(vararg entities: E): Single<Collection<A>> {
+        return deleteSingle(entities.toList())
     }
 
-    override fun deleteAsSingle(entities: List<E>): Single<Collection<A>> {
-        return entityDeleteTemplate.deleteSingle(entities).flatMap {
-            val deletedRecord = convert(entities)
-            Single.just(deletedRecord)
+    override fun deleteSingle(entities: List<E>): Single<Collection<A>> {
+        return entityDeleteTemplate.deleteSingle(entities).map {
+            convert(entities)
         }.doOnSuccess {
             RecordsChange.RecordsDeleted(it).tryNotifyRecordChangeEventInternal()
         }
     }
 
-    override fun deleteAsMayBe(entity: E): Maybe<A> {
-        return entityDeleteTemplate.deleteMaybe(entity).flatMap {
-            val deletedRecord = convert(entity)
-            Maybe.just(deletedRecord)
+    override fun deleteMayBe(entity: E): Maybe<A> {
+        return entityDeleteTemplate.deleteMaybe(entity).map {
+            convert(entity)
         }.doOnSuccess {
             RecordsChange.RecordDeleted(it).tryNotifyRecordChangeEventInternal()
         }
     }
 
-    override fun deleteAsMaybe(vararg entities: E): Maybe<Collection<A>> {
-       return deleteAsMayBe(entities.toList())
+    override fun deleteMaybe(vararg entities: E): Maybe<Collection<A>> {
+        return deleteMayBe(entities.toList())
     }
 
-    override fun deleteAsMayBe(entities: List<E>): Maybe<Collection<A>> {
-        return entityDeleteTemplate.deleteMaybe(entities).flatMap {
-            val deletedRecord = convert(entities)
-            Maybe.just(deletedRecord)
+    override fun deleteMayBe(entities: List<E>): Maybe<Collection<A>> {
+        return entityDeleteTemplate.deleteMaybe(entities).map {
+            convert(entities)
         }.doOnSuccess {
             RecordsChange.RecordsDeleted(it).tryNotifyRecordChangeEventInternal()
         }
@@ -166,20 +159,68 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         return insert(entities.toList())
     }
 
-    override fun insertAsFlow(entity: E): Flow<A> {
+    override fun insertFlow(entity: E): Flow<A> {
         return flow {
             emit(insert(entity))
         }
     }
 
-    override fun insertAsFlow(entities: List<E>): Flow<Collection<A>> {
+    override fun insertFlow(entities: List<E>): Flow<Collection<A>> {
         return flow {
             emit(insert(entities))
         }
     }
 
-    override fun insertAsFlow(vararg entities: E): Flow<Collection<A>> {
-        return insertAsFlow(entities.toList())
+    override fun insertFlow(vararg entities: E): Flow<Collection<A>> {
+        return insertFlow(entities.toList())
+    }
+
+    override fun insertSingle(entity: E): Single<A> {
+        return entityInsertTemplate.insertSingle(entity).flatMap { id ->
+            entityFinder.findByIdSingle(id).map {
+                convert(it)
+            }.doOnSuccess {
+                RecordsChange.RecordInserted(it).tryNotifyRecordChangeEventInternal()
+            }
+        }
+    }
+
+    override fun insertSingle(entities: List<E>): Single<Collection<A>> {
+        return entityInsertTemplate.insertSingle(entities).flatMap { ids ->
+            entityFinder.findWhereIdInSingle(ids).map {
+                convert(it)
+            }.doOnSuccess {
+                RecordsChange.RecordsDeleted(it).tryNotifyRecordChangeEventInternal()
+            }
+        }
+    }
+
+    override fun insertSingle(vararg entities: E): Single<Collection<A>> {
+        return insertSingle(entities.toList())
+    }
+
+    override fun insertMaybe(entity: E): Maybe<A> {
+        return entityInsertTemplate.insertMaybe(entity).flatMap { id ->
+            entityFinder.findByIdMayBe(id).map {
+                convert(it)
+            }.doOnSuccess {
+                RecordsChange.RecordInserted(it).tryNotifyRecordChangeEventInternal()
+            }
+        }
+    }
+
+    override fun insertMaybe(entities: List<E>): Maybe<Collection<A>> {
+        return entityInsertTemplate.insertMaybe(entities).flatMap { ids ->
+            entityFinder.findWhereIdInMayBe(ids).map {
+                convert(it)
+            }.doOnSuccess {
+                RecordsChange.RecordsInserted(it).tryNotifyRecordChangeEventInternal()
+            }
+        }
+    }
+
+    override fun insertMaybe(vararg entities: E): Maybe<Collection<A>> {
+        return insertMaybe(entities.toList())
     }
 
     override suspend fun update(entity: E): A {
