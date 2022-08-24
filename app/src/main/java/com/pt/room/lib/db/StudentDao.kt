@@ -3,6 +3,7 @@ package com.pt.room.lib.db
 import androidx.room.Dao
 import androidx.room.Query
 import com.db.lib.converter.EntityConverter
+import com.db.lib.dao.template.BaseDaoTemplate
 import com.db.lib.dao.template.BaseDaoWithLookupAndConverterEntityTemplate
 import com.db.lib.ddl.EntityFinderTemplate
 import com.pt.room.lib.model.StudentModel
@@ -18,8 +19,7 @@ private const val FIND_ALL_WHERE_ID_IN = "SELECT * FROM StudentEntity WHERE id I
 private const val DELETE_ALL = "DELETE FROM StudentEntity"
 
 @Dao
-interface StudentDao :
-    BaseDaoWithLookupAndConverterEntityTemplate<Long, StudentEntity, StudentModel> {
+interface StudentDao : BaseDaoTemplate<Long, StudentEntity> {
 
     @Query(FIND_BY_ID)
     suspend fun findById(id: Long): StudentEntity?
@@ -55,12 +55,4 @@ interface StudentDao :
     override fun deleteAllFlow(): Flow<Int> = flow {
         emit(deleteAll())
     }
-
-    override val lookupEntity
-        get() = StudentEntityLookup(
-            this
-        )
-
-    override val entityConverter: EntityConverter<StudentEntity, StudentModel>
-        get() = StudentEntityConverter()
 }

@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import com.pt.room.lib.db.StudentDaoProxy
 import com.pt.room.lib.db.StudentDataBase
+import com.pt.room.lib.db.StudentEntityConverter
+import com.pt.room.lib.db.StudentEntityLookup
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,7 +31,25 @@ object DataBaseModule {
 
     @Provides
     @Singleton
-    fun provideStudentDaoProxy(studentDataBase: StudentDataBase): StudentDaoProxy {
-        return StudentDaoProxy(studentDataBase.studentDao())
+    fun provideStudentEntityConvertor() = StudentEntityConverter()
+
+    @Provides
+    @Singleton
+    fun provideStudentLookupEntity(
+        studentDataBase: StudentDataBase
+    ) = StudentEntityLookup(studentDataBase.studentDao())
+
+    @Provides
+    @Singleton
+    fun provideStudentDaoProxy(
+        entityConvertor: StudentEntityConverter,
+        entityLookup: StudentEntityLookup,
+        studentDataBase: StudentDataBase
+    ): StudentDaoProxy {
+        return StudentDaoProxy(
+            entityLookup,
+            entityConvertor,
+            studentDataBase.studentDao()
+        )
     }
 }
