@@ -17,7 +17,7 @@ private const val DELETE_ALL = "DELETE FROM StudentEntity"
 @Dao
 interface StudentDao :
     BaseDaoWithLookupAndConverterEntityTemplate<Long, StudentEntity, StudentModel> {
-    @Query(FIND_BY_ID)
+    /*@Query(FIND_BY_ID)
     suspend fun findById(id: Long): StudentEntity?
 
     @Query(FIND_BY_ID)
@@ -33,7 +33,7 @@ interface StudentDao :
     suspend fun findWhereIdIn(ids: List<Long>): List<StudentEntity>
 
     @Query(FIND_ALL_WHERE_ID_IN)
-    fun findWhereIdInAsFlow(ids: List<Long>): Flow<List<StudentEntity>>
+    fun findWhereIdInAsFlow(ids: List<Long>): Flow<List<StudentEntity>>*/
 
     @Query(DELETE_ALL)
     override suspend fun deleteAll(): Int
