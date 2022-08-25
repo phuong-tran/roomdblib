@@ -16,11 +16,11 @@ class StudentEntityFinder constructor(
         return studentDao.findWhereIdIn(ids)
     }
 
-    override fun findWhereIdInAsFlow(ids: List<Long>): Flow<List<StudentEntity>> {
-        return studentDao.findWhereIdInAsFlow(ids)
+    override fun findWhereIdInFlow(ids: List<Long>): Flow<List<StudentEntity>> {
+        return studentDao.findWhereIdInFlow(ids)
     }
 
-    override fun findIdAsAsFlow(id: Long): Flow<StudentEntity?> {
+    override fun findIdFlow(id: Long): Flow<StudentEntity?> {
         return studentDao.findByIdAsAsFlow(id)
     }
 
