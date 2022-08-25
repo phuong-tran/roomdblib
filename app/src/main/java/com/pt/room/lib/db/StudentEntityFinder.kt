@@ -5,6 +5,9 @@ import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Single
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Work around: https://issuetracker.google.com/issues/160258066
+ */
 class StudentEntityFinder constructor(
     private val studentDao: StudentDao
 ) : EntityFinderTemplate<Long, StudentEntity> {

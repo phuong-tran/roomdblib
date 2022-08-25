@@ -65,9 +65,9 @@ interface StudentDao : BaseDaoTemplate<Long, StudentEntity> {
     override fun deleteAllMaybe(): Maybe<Int>
 
     companion object {
-        private const val FIND_ALL = "SELECT * FROM StudentEntity"
-        private const val FIND_BY_ID = "SELECT * FROM StudentEntity WHERE id =:id"
-        private const val FIND_ALL_WHERE_ID_IN = "SELECT * FROM StudentEntity WHERE id IN(:ids)"
-        private const val DELETE_ALL = "DELETE FROM StudentEntity"
+        private const val FIND_ALL = "SELECT * FROM student"
+        private const val FIND_BY_ID = "SELECT * FROM student WHERE id =:id"
+        private const val FIND_ALL_WHERE_ID_IN = "SELECT * FROM student WHERE id IN(:ids)"
+        private const val DELETE_ALL = "DELETE FROM student"
     }
 }
