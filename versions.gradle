@@ -15,7 +15,7 @@ versions.lifecycle = "2.3.1"
 versions.rxPermission = "0.12"
 versions.fragment = "1.4.0-alpha07"
 versions.navigation = "2.4.0-alpha07"
-versions.room = "2.3.0"
+versions.room = "2.4.3"
 versions.dagger = '2.38.1'
 versions.recyclerView = "1.2.1"
 versions.dataStore = "1.0.0"
@@ -45,7 +45,7 @@ build.daggerhilt = "com.google.dagger:hilt-android-gradle-plugin:$versions.dagge
 deps.build = build
 
 def kotlin = [:]
-kotlin.version = "1.5.21"
+kotlin.version = "1.7.10"
 kotlin.stdlib = "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin"
 kotlin.test = "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"
 kotlin.plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
