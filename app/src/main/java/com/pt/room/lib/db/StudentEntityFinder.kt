@@ -20,8 +20,8 @@ class StudentEntityFinder constructor(
         return studentDao.findWhereIdInFlow(ids)
     }
 
-    override fun findIdFlow(id: Long): Flow<StudentEntity?> {
-        return studentDao.findByIdAsAsFlow(id)
+    override fun findByIdFlow(id: Long): Flow<StudentEntity?> {
+        return studentDao.findByIdFlow(id)
     }
 
     override fun findAllSingle(): Single<List<StudentEntity>> {
