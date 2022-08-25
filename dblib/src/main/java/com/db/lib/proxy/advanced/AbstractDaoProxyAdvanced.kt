@@ -55,9 +55,14 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         }
     }
 
-
+    @Suppress("unused")
     suspend fun notifyRecordChangeEvent(record: RecordsChange<A>): RecordsChange<A> {
         return record.notifyRecordChangeEventInternal()
+    }
+
+    @Suppress("unused")
+    fun tryNotifyRecordChangeEvent(record: RecordsChange<A>) : RecordsChange<A> {
+        return record.tryNotifyRecordChangeEventInternal()
     }
 
     override suspend fun delete(entity: E): A {
@@ -291,5 +296,45 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         return flow {
             emit(update(entities))
         }
+    }
+
+    override fun updateSingle(entity: E): Single<A> {
+        return entityUpdateTemplate.updateSingle(entity).map {
+            convert(entity)
+        }.doOnSuccess {
+            RecordsChange.RecordUpdated(it).tryNotifyRecordChangeEventInternal()
+        }
+    }
+
+    override fun updateSingle(entities: List<E>): Single<Collection<A>> {
+        return entityUpdateTemplate.updateSingle(entities).map {
+            convert(entities)
+        }.doOnSuccess {
+            RecordsChange.RecordsUpdated(it).tryNotifyRecordChangeEventInternal()
+        }
+    }
+
+    override fun updateSingle(vararg entities: E): Single<Collection<A>> {
+        return updateSingle(entities.toList())
+    }
+
+    override fun updateMaybe(entity: E): Maybe<A> {
+        return entityUpdateTemplate.updateMaybe(entity).map {
+            convert(entity)
+        }.doOnSuccess {
+            RecordsChange.RecordUpdated(it).tryNotifyRecordChangeEventInternal()
+        }
+    }
+
+    override fun updateMaybe(entities: List<E>): Maybe<Collection<A>> {
+        return entityUpdateTemplate.updateMaybe(entities).map {
+            convert(entities)
+        }.doOnSuccess {
+            RecordsChange.RecordsUpdated(it).tryNotifyRecordChangeEventInternal()
+        }
+    }
+
+    override fun updateMaybe(vararg entities: E): Maybe<Collection<A>> {
+        return updateMaybe(entities.toList())
     }
 }
