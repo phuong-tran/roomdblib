@@ -31,7 +31,6 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
     private val entityDeleteTemplate: EntityDeleteTemplate<E>,
     config: Config = Config.defaultConfig
 ) : EntityConverter<E, A> by entityConverter,
-    //EntityFinderTemplate<ID, E> by entityFinder,
     EntityDeleteTransformer<E, A>,
     EntityUpdateTransformer<E, A>,
     EntityInsertTransformer<E, A> {
@@ -127,6 +126,15 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         }
     }
 
+    override fun deleteMayBe(entities: List<E>): Maybe<Collection<A>> {
+        return entityDeleteTemplate.deleteMaybe(entities).map {
+            convert(entities)
+        }.doOnSuccess {
+            RecordsChange.RecordsDeleted(it).tryNotifyRecordChangeEventInternal()
+        }
+    }
+
+
     override fun deleteMaybe(vararg entities: E): Maybe<Collection<A>> {
         return deleteMayBe(entities.toList())
     }
@@ -151,11 +159,15 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         }
     }
 
-    override fun deleteMayBe(entities: List<E>): Maybe<Collection<A>> {
-        return entityDeleteTemplate.deleteMaybe(entities).map {
-            convert(entities)
-        }.doOnSuccess {
-            RecordsChange.RecordsDeleted(it).tryNotifyRecordChangeEventInternal()
+    override fun deleteAllSingle(): Single<Int> {
+        return entityDeleteTemplate.deleteAllSingle().doOnSuccess {
+            RecordsChange.RecordsDeletedAll.tryNotifyRecordChangeEventInternal()
+        }
+    }
+
+    override fun deleteAllMaybe(): Maybe<Int> {
+        return entityDeleteTemplate.deleteAllMaybe().doOnSuccess {
+            RecordsChange.RecordsDeletedAll.tryNotifyRecordChangeEventInternal()
         }
     }
 

@@ -53,4 +53,10 @@ interface StudentDao : BaseDaoTemplate<Long, StudentEntity> {
     override fun deleteAllFlow(): Flow<Int> = flow {
         emit(deleteAll())
     }
+
+    @Query(DELETE_ALL)
+    override fun deleteAllSingle(): Single<Int>
+
+    @Query(DELETE_ALL)
+    override fun deleteAllMaybe(): Maybe<Int>
 }
