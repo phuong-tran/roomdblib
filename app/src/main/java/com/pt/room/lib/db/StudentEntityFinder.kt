@@ -47,4 +47,12 @@ class StudentEntityFinder constructor(
     override fun findWhereIdInMayBe(ids: List<Long>): Maybe<List<StudentEntity>> {
         return studentDao.findWhereIdInMayBe(ids)
     }
+
+    override suspend fun findAll(): List<StudentEntity> {
+        return studentDao.findAll()
+    }
+
+    override fun findAllFlow(): Flow<List<StudentEntity>> {
+        return studentDao.findAllFlow()
+    }
 }
