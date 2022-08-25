@@ -1,6 +1,7 @@
 package com.pt.room.lib.di
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Room
 import com.pt.room.lib.db.StudentDaoProxy
 import com.pt.room.lib.db.StudentDataBase
@@ -12,6 +13,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import java.util.concurrent.Executors
 
 @Suppress("unused")
 @Module
@@ -26,7 +28,12 @@ object DataBaseModule {
             context.applicationContext,
             StudentDataBase::class.java,
             databaseName
-        ).fallbackToDestructiveMigration().build()
+        ).fallbackToDestructiveMigration().setQueryCallback(
+            { sqlQuery, bindArgs ->
+
+                Log.d("PHUONGTRAN", "query = $sqlQuery, argument = $bindArgs")
+            }, Executors.newSingleThreadExecutor()
+        ).build()
     }
 
     @Provides
