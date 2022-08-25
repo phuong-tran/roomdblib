@@ -275,19 +275,19 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         }
     }
 
-    override fun updateAsFlow(entity: E): Flow<A> {
+    override fun updateFlow(entity: E): Flow<A> {
         return flow {
             emit(update(entity))
         }
     }
 
-    override fun updateAsFlow(vararg entities: E): Flow<Collection<A>> {
+    override fun updateFlow(vararg entities: E): Flow<Collection<A>> {
         return flow {
             emit(update(entities.toList()))
         }
     }
 
-    override fun updateAsFlow(entities: List<E>): Flow<Collection<A>> {
+    override fun updateFlow(entities: List<E>): Flow<Collection<A>> {
         return flow {
             emit(update(entities))
         }
