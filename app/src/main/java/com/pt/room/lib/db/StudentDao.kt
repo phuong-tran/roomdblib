@@ -2,9 +2,7 @@ package com.pt.room.lib.db
 
 import androidx.room.Dao
 import androidx.room.Query
-import com.db.lib.dao.BaseDao
 import com.db.lib.dao.template.BaseDaoTemplate
-import com.db.lib.ddl.EntityFinderTemplate
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Single
@@ -64,10 +62,25 @@ interface StudentDao : BaseDaoTemplate<Long, StudentEntity> {
     @Query(DELETE_ALL)
     override fun deleteAllMaybe(): Maybe<Int>
 
+  /*  @Query(DELETE_BY_ID)
+    suspend fun deleteById(id: Long)
+
+    @Query(DELETE_ALL_WHERE_ID_IN)
+    suspend fun deleteByIdList(ids: List<Long>)
+
+    @Query(DELETE_BY_ID)
+    fun deleteByIdCompletable(id: Long): Completable
+
+    @Query(DELETE_ALL_WHERE_ID_IN)
+    fun deleteByIdListCompletable(ids: List<Long>): Completable*/
+
     companion object {
-        private const val FIND_ALL = "SELECT * FROM student"
-        private const val FIND_BY_ID = "SELECT * FROM student WHERE id =:id"
-        private const val FIND_ALL_WHERE_ID_IN = "SELECT * FROM student WHERE id IN(:ids)"
-        private const val DELETE_ALL = "DELETE FROM student"
+        private const val tableName = "student"
+        private const val FIND_ALL = "SELECT * FROM $tableName"
+        private const val FIND_BY_ID = "SELECT * FROM $tableName WHERE id =:id"
+        private const val FIND_ALL_WHERE_ID_IN = "SELECT * FROM $tableName WHERE id IN(:ids)"
+        private const val DELETE_ALL = "DELETE FROM $tableName"
+        // private const val DELETE_BY_ID = "DELETE FROM $tableName WHERE id =:id"
+        // private const val DELETE_ALL_WHERE_ID_IN = "DELETE FROM $tableName WHERE id IN(:ids)"
     }
 }

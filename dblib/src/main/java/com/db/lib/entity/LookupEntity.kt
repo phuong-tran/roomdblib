@@ -7,11 +7,11 @@ interface LookupEntity<ID, E> {
         TODO("Not yet implemented")
     }
 
-    suspend fun findWhereIdIn(ids: List<ID>): List<E> {
+    suspend fun findByIds(ids: List<ID>): List<E> {
         TODO("Not yet implemented")
     }
 
-    fun findWhereIdInFlow(ids: List<ID>): Flow<List<E>> {
+    fun findByIdsFlow(ids: List<ID>): Flow<List<E>> {
         TODO("Not yet implemented")
     }
 

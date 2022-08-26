@@ -14,7 +14,7 @@ abstract class AbstractDaoProxyBasic<ID, E>(
     entityFinder: EntityFinderTemplate<ID, E>,
     entityInsertTemplate: EntityInsertTemplate<ID, E>,
     entityUpdateTemplate: EntityUpdateTemplate<E>,
-    entityDeleteTemplate: EntityDeleteTemplate<E>,
+    entityDeleteTemplate: EntityDeleteTemplate<ID, E>,
     config: Config = Config.defaultConfig
 ) : AbstractDaoProxyAdvanced<ID, E, E>(
     NoopConverter(),

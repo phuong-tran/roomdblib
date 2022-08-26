@@ -7,4 +7,4 @@ import com.db.lib.dao.DaoUpdateTemplate
 interface BaseDaoTemplate<ID, E> :
     DaoInsertTemplate<ID, E>,
     DaoUpdateTemplate<ID, E>,
-    DaoDeleteTemplate<E>
+    DaoDeleteTemplate<ID, E>

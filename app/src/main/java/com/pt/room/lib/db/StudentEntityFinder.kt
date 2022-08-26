@@ -15,11 +15,11 @@ class StudentEntityFinder constructor(
       return studentDao.findById(id)
     }
 
-    override suspend fun findWhereIdIn(ids: List<Long>): List<StudentEntity> {
+    override suspend fun findByIds(ids: List<Long>): List<StudentEntity> {
         return studentDao.findWhereIdIn(ids)
     }
 
-    override fun findWhereIdInFlow(ids: List<Long>): Flow<List<StudentEntity>> {
+    override fun findByIdsFlow(ids: List<Long>): Flow<List<StudentEntity>> {
         return studentDao.findWhereIdInFlow(ids)
     }
 
@@ -43,11 +43,11 @@ class StudentEntityFinder constructor(
         return studentDao.findByIdMayBe(id)
     }
 
-    override fun findWhereIdInSingle(ids: List<Long>): Single<List<StudentEntity>> {
+    override fun findByIdsSingle(ids: List<Long>): Single<List<StudentEntity>> {
         return studentDao.findWhereIdInSingle(ids)
     }
 
-    override fun findWhereIdInMayBe(ids: List<Long>): Maybe<List<StudentEntity>> {
+    override fun findByIdsMayBe(ids: List<Long>): Maybe<List<StudentEntity>> {
         return studentDao.findWhereIdInMayBe(ids)
     }
 

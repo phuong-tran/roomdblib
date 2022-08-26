@@ -22,11 +22,11 @@ interface EntityFinderTemplate<ID, E> : LookupEntity<ID, E> {
         TODO("Not yet implemented")
     }
 
-    fun findWhereIdInSingle(ids: List<ID>): Single<List<E>> {
+    fun findByIdsSingle(ids: List<ID>): Single<List<E>> {
         TODO("Not yet implemented")
     }
 
-    fun findWhereIdInMayBe(ids: List<ID>): Maybe<List<E>> {
+    fun findByIdsMayBe(ids: List<ID>): Maybe<List<E>> {
         TODO("Not yet implemented")
     }
 

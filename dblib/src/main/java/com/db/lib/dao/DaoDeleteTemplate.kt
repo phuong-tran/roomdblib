@@ -9,7 +9,7 @@ import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Single
 import kotlinx.coroutines.flow.Flow
 
-interface DaoDeleteTemplate<E> : EntityDeleteTemplate<E> {
+interface DaoDeleteTemplate<ID, E> : EntityDeleteTemplate<ID, E> {
     @Transaction
     @Delete
     override suspend fun delete(entity: E): Int
