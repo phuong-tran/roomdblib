@@ -45,29 +45,17 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
     val subscriptionCount: StateFlow<Int> get() = sharedDataChangeStateFlow.subscriptionCount
     val subscriptionCountValue: Int get() = subscriptionCount.value
 
-    private suspend fun RecordsChange<A>.notifyRecordChangeEventInternal(): RecordsChange<A> {
-        return apply {
-            sharedDataChangeStateFlow.emit(this)
-        }
-    }
-
-    private fun RecordsChange<A>.tryNotifyRecordChangeEventInternal(): RecordsChange<A> {
+    private fun RecordsChange<A>.notifyRecordChangeEventInternal(): RecordsChange<A> {
         return apply {
             mainCoroutineScope.launch {
                 sharedDataChangeStateFlow.emit(this@apply)
             }
-            // sharedDataChangeStateFlow.tryEmit(this)
         }
     }
 
     @Suppress("unused")
-    suspend fun notifyRecordChangeEvent(record: RecordsChange<A>): RecordsChange<A> {
+    fun notifyRecordChangeEvent(record: RecordsChange<A>): RecordsChange<A> {
         return record.notifyRecordChangeEventInternal()
-    }
-
-    @Suppress("unused")
-    fun tryNotifyRecordChangeEvent(record: RecordsChange<A>): RecordsChange<A> {
-        return record.tryNotifyRecordChangeEventInternal()
     }
 
     final override suspend fun delete(entity: E): A {
@@ -112,7 +100,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         return entityDeleteTemplate.deleteSingle(entity).map {
             entityConverter.convert(entity)
         }.doOnSuccess {
-            RecordsChange.RecordDeleted(it).tryNotifyRecordChangeEventInternal()
+            RecordsChange.RecordDeleted(it).notifyRecordChangeEventInternal()
         }
     }
 
@@ -124,7 +112,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         return entityDeleteTemplate.deleteSingle(entities).map {
             entityConverter.convert(entities)
         }.doOnSuccess {
-            RecordsChange.RecordsDeleted(it).tryNotifyRecordChangeEventInternal()
+            RecordsChange.RecordsDeleted(it).notifyRecordChangeEventInternal()
         }
     }
 
@@ -132,7 +120,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         return entityDeleteTemplate.deleteMaybe(entity).map {
             entityConverter.convert(entity)
         }.doOnSuccess {
-            RecordsChange.RecordDeleted(it).tryNotifyRecordChangeEventInternal()
+            RecordsChange.RecordDeleted(it).notifyRecordChangeEventInternal()
         }
     }
 
@@ -140,7 +128,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         return entityDeleteTemplate.deleteMaybe(entities).map {
             entityConverter.convert(entities)
         }.doOnSuccess {
-            RecordsChange.RecordsDeleted(it).tryNotifyRecordChangeEventInternal()
+            RecordsChange.RecordsDeleted(it).notifyRecordChangeEventInternal()
         }
     }
 
@@ -156,7 +144,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
 
     final override fun deleteAllCompletable(): Completable {
         return entityDeleteTemplate.deleteAllCompletable().doOnComplete {
-            RecordsChange.RecordsDeletedAll.tryNotifyRecordChangeEventInternal()
+            RecordsChange.RecordsDeletedAll.notifyRecordChangeEventInternal()
         }
     }
 
@@ -169,13 +157,13 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
 
     final override fun deleteAllSingle(): Single<Int> {
         return entityDeleteTemplate.deleteAllSingle().doOnSuccess {
-            RecordsChange.RecordsDeletedAll.tryNotifyRecordChangeEventInternal()
+            RecordsChange.RecordsDeletedAll.notifyRecordChangeEventInternal()
         }
     }
 
     final override fun deleteAllMaybe(): Maybe<Int> {
         return entityDeleteTemplate.deleteAllMaybe().doOnSuccess {
-            RecordsChange.RecordsDeletedAll.tryNotifyRecordChangeEventInternal()
+            RecordsChange.RecordsDeletedAll.notifyRecordChangeEventInternal()
         }
     }
 
@@ -290,7 +278,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
             entityFinder.findByIdSingle(id).map {
                 entityConverter.convert(it)
             }.doOnSuccess {
-                RecordsChange.RecordInserted(it).tryNotifyRecordChangeEventInternal()
+                RecordsChange.RecordInserted(it).notifyRecordChangeEventInternal()
             }
         }
     }
@@ -300,7 +288,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
             entityFinder.findByIdsSingle(ids).map {
                 entityConverter.convert(it)
             }.doOnSuccess {
-                RecordsChange.RecordsDeleted(it).tryNotifyRecordChangeEventInternal()
+                RecordsChange.RecordsDeleted(it).notifyRecordChangeEventInternal()
             }
         }
     }
@@ -314,7 +302,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
             entityFinder.findByIdMayBe(id).map {
                 entityConverter.convert(it)
             }.doOnSuccess {
-                RecordsChange.RecordInserted(it).tryNotifyRecordChangeEventInternal()
+                RecordsChange.RecordInserted(it).notifyRecordChangeEventInternal()
             }
         }
     }
@@ -324,7 +312,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
             entityFinder.findByIdsMayBe(ids).map {
                 entityConverter.convert(it)
             }.doOnSuccess {
-                RecordsChange.RecordsInserted(it).tryNotifyRecordChangeEventInternal()
+                RecordsChange.RecordsInserted(it).notifyRecordChangeEventInternal()
             }
         }
     }
@@ -373,7 +361,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         return entityUpdateTemplate.updateSingle(entity).map {
             entityConverter.convert(entity)
         }.doOnSuccess {
-            RecordsChange.RecordUpdated(it).tryNotifyRecordChangeEventInternal()
+            RecordsChange.RecordUpdated(it).notifyRecordChangeEventInternal()
         }
     }
 
@@ -381,7 +369,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         return entityUpdateTemplate.updateSingle(entities).map {
             entityConverter.convert(entities)
         }.doOnSuccess {
-            RecordsChange.RecordsUpdated(it).tryNotifyRecordChangeEventInternal()
+            RecordsChange.RecordsUpdated(it).notifyRecordChangeEventInternal()
         }
     }
 
@@ -393,7 +381,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         return entityUpdateTemplate.updateMaybe(entity).map {
             entityConverter.convert(entity)
         }.doOnSuccess {
-            RecordsChange.RecordUpdated(it).tryNotifyRecordChangeEventInternal()
+            RecordsChange.RecordUpdated(it).notifyRecordChangeEventInternal()
         }
     }
 
@@ -401,7 +389,7 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
         return entityUpdateTemplate.updateMaybe(entities).map {
             entityConverter.convert(entities)
         }.doOnSuccess {
-            RecordsChange.RecordsUpdated(it).tryNotifyRecordChangeEventInternal()
+            RecordsChange.RecordsUpdated(it).notifyRecordChangeEventInternal()
         }
     }
 
