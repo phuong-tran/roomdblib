@@ -21,7 +21,7 @@ import java.util.concurrent.Executors
 object DataBaseModule {
     private const val databaseName = "studentDB"
 
-    @Provides
+    /*@Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): StudentDataBase {
         return Room.databaseBuilder(
@@ -34,6 +34,16 @@ object DataBaseModule {
                 Log.d("PHUONGTRAN", "query = $sqlQuery, argument = $bindArgs")
             }, Executors.newSingleThreadExecutor()
         ).build()
+    }*/
+
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext context: Context): StudentDataBase {
+        return Room.databaseBuilder(
+            context.applicationContext,
+            StudentDataBase::class.java,
+            databaseName
+        ).fallbackToDestructiveMigration().build()
     }
 
     @Provides

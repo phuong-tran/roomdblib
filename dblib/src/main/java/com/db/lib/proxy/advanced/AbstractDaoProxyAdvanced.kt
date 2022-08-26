@@ -15,6 +15,9 @@ import com.db.lib.transformer.EntityUpdateTransformer
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +25,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 
 abstract class AbstractDaoProxyAdvanced<ID, E, A>(
     private val entityConverter: EntityConverter<E, A>,
@@ -34,7 +38,6 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
     EntityDeleteTransformer<E, A>,
     EntityUpdateTransformer<E, A>,
     EntityInsertTransformer<E, A> {
-
     private val sharedDataChangeStateFlow: MutableSharedFlow<RecordsChange<A>> =
         config.toMutableSharedFlow()
     val dataRecordChangeFlow: Flow<RecordsChange<A>> =
@@ -51,7 +54,10 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
 
     private fun RecordsChange<A>.tryNotifyRecordChangeEventInternal(): RecordsChange<A> {
         return apply {
-            sharedDataChangeStateFlow.tryEmit(this)
+            mainCoroutineScope.launch {
+                sharedDataChangeStateFlow.emit(this@apply)
+            }
+           // sharedDataChangeStateFlow.tryEmit(this)
         }
     }
 
@@ -336,5 +342,11 @@ abstract class AbstractDaoProxyAdvanced<ID, E, A>(
 
     override fun updateMaybe(vararg entities: E): Maybe<Collection<A>> {
         return updateMaybe(entities.toList())
+    }
+
+    private companion object {
+        private val mainCoroutineScope: CoroutineScope by lazy {
+            CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+        }
     }
 }
